@@ -6,6 +6,7 @@ $GLOBALS['title'] = "Sean White & Associates - Choose a Package";
 $GLOBALS['desc'] = "Sean White & Associates offers the most comprehensive service available in the industry today.";
 $GLOBALS['keywords'] = "credit repair, financial services, packages";
 include('header.php');
+
 ?>
 
 
@@ -243,7 +244,7 @@ include('header.php');
         <div class="step">
           <h2 class="header">SELECT YOUR SERVICE LEVEL</h2>
           <div class="row">
-            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=16be99c5-ec8f-4062-96fe-6dac53a6d3a9')">
+            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=1062fc64-554f-4e36-8166-11f48898e352')">
               <div class="pricing-card" onclick="selectCard('premium', 'package_1')">
                 <div class="card-header">
                   <h2 class="card-title">Premium Package</h2>
@@ -271,7 +272,7 @@ include('header.php');
                 </ul>
               </div>
             </div>
-            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=64391287-9984-417c-ae7c-91229f69f779')">
+            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=52296d2d-16ac-4b35-9c50-7dd00cebb712')">
               <div class="pricing-card" onclick="selectCard('clean-slate', 'package_2')">
                 <input type="hidden" id="package_2" value="2" data-price="134.99" data-name="Clean Slate">
                 <input type="hidden" id="package_2_work_fee" value="195">
@@ -298,7 +299,7 @@ include('header.php');
                 </ul>
               </div>
             </div>
-            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=a4f7ce2b-e070-43f1-95fa-e1697935e4bc')">
+            <div class="col-lg-4" onclick="showForm('https://eform.pandadoc.com/?eform=fe20f9f2-ac88-4a31-8fff-64efd9a3fad6')">
               <div class="pricing-card" onclick="selectCard('credit-remodel', 'package_3')">
                 <input type="hidden" id="package_3" value="3" data-price="109.99" data-name="Credit Remodel">
                 <input type="hidden" id="package_3_work_fee" value="195">
@@ -411,7 +412,7 @@ include('header.php');
         </div>
         <!-- Navigation buttons -->
 
-        <button type="button" class="theme-btn   my-5" id="nextBtn" onclick="nextPrev(1)">Next</button>
+  <button type="button" class="theme-btn   my-5" id="nextBtn" onclick="nextPrev(1)">Next</button>
         <button type="button" class="theme-btn d-none   my-5" id="payNowBtn">Pay Now</button>
         <button type="button" class="theme-btn d-none   my-5" id="submit">Submit</button>
       </div>
@@ -423,7 +424,28 @@ include('header.php');
 
   <script>
     let currentStep = 0; // Current step is set to the first step (0)
+    document.getElementById('address').addEventListener('keyup', function() {
+        const maxLength = 55;
+        const addressInput = this;
 
+        if (addressInput.value.length > maxLength) {
+          Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: "You have reached the maximum length of characters.",
+          toast: true,
+          position: 'top-right',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          }
+        });
+            addressInput.value = addressInput.value.substring(0, maxLength); // Trim to max length
+        }
+    });
     // Show the first step when the page loads
     showStep(currentStep);
 
@@ -790,15 +812,7 @@ include('header.php');
             })
             .then(response => response.text())
             .then(data => {
-              Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: "Payment successful and data saved!",
-                toast: true,
-                position: 'top-right',
-                timer: 3000,
-                timerProgressBar: true
-              });
+            
 
             })
             .catch(error => {
@@ -813,7 +827,7 @@ include('header.php');
               });
             });
               // Collect data from the form
-       carddata = {
+      var zapierdata = {
         amount: document.getElementById('package_price').value,
         // Include customer information
         packageId: document.getElementById('package_id').value,
@@ -831,12 +845,13 @@ include('header.php');
         transactionId: result.transactionId
 
       };
+      console.log(zapierdata);
           fetch('./action/send_to_zapier.php', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify(carddata)
+              body: JSON.stringify(zapierdata)
             })
             .then(response => response.json())
             .then(responseData => {
